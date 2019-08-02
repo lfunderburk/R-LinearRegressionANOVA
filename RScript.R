@@ -5,6 +5,8 @@
 
 ### PART I: Linear Regression
 # Import datasets 
+# Alternatively, you can load data via
+# trainingSet = read.csv('../PATH/TO/FILE/FILENAME.csv')
 require("datasets")
 data("cars")
 str(cars)
