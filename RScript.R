@@ -1,15 +1,12 @@
 ## Script Author: Laura Gutierrez Funderburk
-## SciProg R Workshop: Introduction to Linear Regression
+## RLadies R Workshop: Introduction to Linear Regression
 ## and Analysis of Variance (ANOVA)
 ## Simon Fraser University, August 2019
 
 ### PART I: Linear Regression
 # Import datasets 
-# Alternatively, you can load data via
-# trainingSet = read.csv('../PATH/TO/FILE/FILENAME.csv')
-require("datasets")
-data("cars")
-str(cars)
+cars<-read.table("CARSDATA.csv",sep=",", header=TRUE)
+cars
 
 # Check if there are NaN values - should return TRUE if not
 complete.cases(cars)
@@ -17,14 +14,34 @@ complete.cases(cars)
 # Plot all variables
 plot(cars)
 
-
 # Set up linear model
 car_model <- lm(cars$dist ~ cars$speed)
 car_model
 
-# Plot model statistics -evaluate whether it is a good fit or not
+mean(car_model$residuals)
+
+# Plot model statistics -evaluate whether data follows Normal distribution, residuals follow non-linear pattern, etc
+print("Diagnostics plots")
 par(mfrow=c(2,2))
 plot(car_model)
+
+
+print("Linear Regression Summary")
+lm.out = with(cars,car_model)
+
+print(summary(lm.out))
+
+print("ANOVA summary")
+print(summary.aov(lm.out))
+aov.out = aov(cars$dist~cars$speed,data = cars)
+
+
+print("Shapiro-Wilk normality test")
+print("If the p-value of the Shapiro-Wilk Test is greater than 0.05, the data is normal")
+ins.residuals <- residuals(object = aov.out)
+print(shapiro.test(x = ins.residuals))
+
+
 
 # Plot fitted model against data 
 par(mfrow=c(1,1))
@@ -71,6 +88,7 @@ predict(car_model, interval="prediction")
 
 
 ### PART II: Multivariate Linear Regression
+require("datasets")
 data("airquality")
 str(airquality)
 
@@ -107,21 +125,6 @@ summary(air_model2)
 par(mfrow=c(1,1))
 plot(airQ$Temp ~ airQ$Ozone)
 abline(air_model2, col="blue", lwd=3)
-
-# Polynomial
-air_model3 <- lm(airQ$Temp ~ I(airQ$Ozone^2),data=airQ)
-par(mfrow=c(2,2))
-plot(air_model3)
-summary(air_model3)
-
-# Fit polynomial model
-library(ggplot2)
-ggplot(airQ,aes(airQ$Ozone,airQ$Temp)) + geom_point() + stat_smooth(method=lm, formula = y ~ poly(x,2,raw=TRUE))
-
-# Compare models
-anova(air_model1,air_model2)
-
-anova(air_model1,air_model3)
 
 
 
